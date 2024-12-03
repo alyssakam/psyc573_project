@@ -1,0 +1,39 @@
+
+TITLE: Compute Ability Level for Age 7 Twins
+
+DATA:
+  FILE is "PSYC-573_LTS.dat";
+
+VARIABLE:
+  
+  NAMES ARE 
+  ID FAMID Age Version itema1-itema44;
+ 
+  usevariables ARE  
+  itema1-itema11 itema19-itema27 itema29
+  itema33-itema39;
+  categorical ARE  
+  itema1-itema11 itema19-itema27 itema29
+  itema33-itema39;
+  MISSING ARE .;
+
+ANALYSIS:
+  processors=4;
+  ESTIMATOR = mlr;
+  ITERATIONS = 12000;
+  COVERAGE = 0;
+  LINK = logit;
+
+MODEL:
+  ! regress vocab, the factor, on all vocab items
+  vocab by itema1* itema2-itema11
+  itema19-itema27 itema29 itema33-itema39;
+  vocab@1;
+  ! fix the factor variance to 1
+  [vocab@0];
+  ! fix factor means to 0
+
+OUTPUT: tech1 tech4 tech8;
+SAVEDATA: 
+  FILE is NewOut_11-30-24.txt;
+  SAVE = FSCORES;
